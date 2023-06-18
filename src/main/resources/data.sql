@@ -1,2 +1,2 @@
-insert into ROLES values (1, 'ROLE_USER');
-insert into ROLES values (2, 'ROLE_ADMIN');
+insert into USERS values (1, 'Kankipati Sasidhar','Singapore');
+insert into USERS values (2, 'Elon Musk','Pennsylvania');
