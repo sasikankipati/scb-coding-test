@@ -50,7 +50,7 @@ public class UserControllerTest {
     @Test
     public void testSaveUserByValidInputs() {
         Mockito.doNothing().when(userService).saveUser(1, "Name", "City");
-        String saveResponse = userController.saveUser("dummyAuth", 1, "Name", "City").getBody();
+        String saveResponse = userController.createUser("dummyAuth", 1, "Name", "City").getBody();
         Assertions.assertEquals(AppConstants.SUCCESS, saveResponse);
     }
 

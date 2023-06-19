@@ -17,7 +17,7 @@ public class AuthenticationResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String jwt;
-    private String userName;
+    private String clientName;
     private List<String> roles;
 
 }

@@ -1,7 +1,7 @@
 package com.user.service;
 
 import com.user.common.UserTestSupport;
-import com.user.common.exception.UserAlreadyExistsException;
+import com.user.exception.UserAlreadyExistsException;
 import com.user.entity.User;
 import com.user.exception.UserNotFoundException;
 import com.user.repository.UserRepository;
@@ -62,7 +62,7 @@ public class UserServiceTest {
         Exception exception = Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
             userService.saveUser(1, "Name", "City");
         });
-        Assertions.assertEquals("User already exists with name or id : 1", exception.getMessage());
+        Assertions.assertEquals("User already exists with id : 1", exception.getMessage());
     }
 
     @Test

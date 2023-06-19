@@ -1,6 +1,6 @@
 package com.user.security.service;
 
-import com.user.security.core.UserDetailsImpl;
+import com.user.security.core.ClientDetailsImpl;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +22,7 @@ public class JWTService {
 
     public String generateJWT(final Authentication authentication) {
         log.info("JWTService > generateJWTToken > Start [authentication : {}]", authentication);
-        UserDetails loggedInUser = (UserDetailsImpl) authentication.getPrincipal();
+        UserDetails loggedInUser = (ClientDetailsImpl) authentication.getPrincipal();
         String jwtToken = Jwts.builder()
                 .setSubject((loggedInUser.getUsername()))
                 .setIssuedAt(new Date())

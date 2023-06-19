@@ -1,7 +1,7 @@
 package com.user.security.filter;
 
 import com.user.common.constants.AppConstants;
-import com.user.security.service.AuthUserDetailsService;
+import com.user.security.service.AuthClientDetailsService;
 import com.user.security.service.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,7 +26,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
 
-    private final AuthUserDetailsService userDetailsService;
+    private final AuthClientDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

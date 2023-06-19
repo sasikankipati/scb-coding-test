@@ -1,6 +1,6 @@
 package com.user.service;
 
-import com.user.common.exception.UserAlreadyExistsException;
+import com.user.exception.UserAlreadyExistsException;
 import com.user.entity.User;
 import com.user.exception.UserNotFoundException;
 import com.user.repository.UserRepository;

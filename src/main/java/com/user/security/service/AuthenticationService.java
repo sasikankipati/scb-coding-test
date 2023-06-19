@@ -1,16 +1,16 @@
 package com.user.security.service;
 
 import com.user.common.constants.RoleEnum;
-import com.user.security.core.UserDetailsImpl;
-import com.user.security.entity.AuthUser;
+import com.user.security.core.ClientDetailsImpl;
+import com.user.security.entity.Client;
 import com.user.security.entity.Role;
-import com.user.common.exception.UserAlreadyExistsException;
+import com.user.security.exception.ClientAlreadyExistsException;
 import com.user.security.exception.RoleNotFoundException;
 import com.user.security.dto.request.AuthenticationRequest;
 import com.user.security.dto.request.RegisterRequest;
 import com.user.security.dto.response.AuthenticationResponse;
 import com.user.security.dto.response.RegisterResponse;
-import com.user.security.repository.AuthUserRepository;
+import com.user.security.repository.ClientRepository;
 import com.user.security.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final AuthUserRepository authUserRepository;
+    private final ClientRepository clientRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -44,18 +44,18 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
 
     /**
-     * Function to register new user for Authentication
-     * @param registerRequest - Register request with user details
+     * Function to register new Client for Authentication
+     * @param registerRequest - Register request with Client details
      * @return - Register Response with registration status
      */
-    public RegisterResponse registerUser(RegisterRequest registerRequest) {
-        log.info("AuthenticationService > RegisterResponse > Start [userName : {}]", registerRequest.getUserName());
-        if (authUserRepository.existsByUserName(registerRequest.getUserName())) {
-            log.error("AuthenticationService > RegisterResponse > User already exists with name : {}]", registerRequest.getUserName());
-            throw new UserAlreadyExistsException(registerRequest.getUserName());
+    public RegisterResponse registerClient(RegisterRequest registerRequest) {
+        log.info("AuthenticationService > RegisterResponse > Start [clientName : {}]", registerRequest.getClientName());
+        if (clientRepository.existsByClientName(registerRequest.getClientName())) {
+            log.error("AuthenticationService > RegisterResponse > Client already exists with name : {}]", registerRequest.getClientName());
+            throw new ClientAlreadyExistsException(registerRequest.getClientName());
         }
 
-        AuthUser authUser = new AuthUser(registerRequest.getUserName(), passwordEncoder.encode(registerRequest.getPassword()));
+        Client client = new Client(registerRequest.getClientName(), passwordEncoder.encode(registerRequest.getPassword()));
         Set<Role> roles = new HashSet<>();
 
         if (CollectionUtils.isEmpty(registerRequest.getRoles())) {
@@ -69,34 +69,34 @@ public class AuthenticationService {
                 roles.add(role);
             });
         }
-        authUser.setRoles(roles);
-        authUserRepository.save(authUser);
+        client.setRoles(roles);
+        clientRepository.save(client);
 
-        log.info("AuthenticationService > RegisterResponse > End [userName : {}]", registerRequest.getUserName());
-        return new RegisterResponse("User registered successfully!");
+        log.info("AuthenticationService > RegisterResponse > End [clientName : {}]", registerRequest.getClientName());
+        return new RegisterResponse("Client registered successfully!");
     }
 
     /**
-     * Function to authenticate user with spring security
+     * Function to authenticate Client with spring security
      * @param authenticationRequest - Authentication request holds the credentials
      * @return - Authentication Response with generated JWT
      */
-    public AuthenticationResponse authenticateUser(AuthenticationRequest authenticationRequest) {
-        log.info("AuthenticationService > authenticateUser > Start [userName : {}]", authenticationRequest.getUserName());
+    public AuthenticationResponse authenticateClient(AuthenticationRequest authenticationRequest) {
+        log.info("AuthenticationService > authenticateClient > Start [clientName : {}]", authenticationRequest.getClientName());
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationRequest.getUserName(), authenticationRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(authenticationRequest.getClientName(), authenticationRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateJWT(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
+        ClientDetailsImpl clientDetails = (ClientDetailsImpl) authentication.getPrincipal();
+        List<String> roles = clientDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        log.info("AuthenticationService > authenticateUser > End [userName : {}]", authenticationRequest.getUserName());
+        log.info("AuthenticationService > authenticateClient > End [clientName : {}]", authenticationRequest.getClientName());
         return new AuthenticationResponse(jwtToken,
-                userDetails.getUsername(),
+                clientDetails.getUsername(),
                 roles);
     }
 }

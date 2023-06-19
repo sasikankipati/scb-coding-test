@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class RegisterRequest {
 
-    @NotNull(message = "UserName is required")
-    private String userName;
+    @NotNull(message = "Client Name is required")
+    private String clientName;
     @NotNull(message = "Password is required")
     private String password;
     private List<RoleEnum> roles;
