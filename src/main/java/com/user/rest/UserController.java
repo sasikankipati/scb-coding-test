@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,25 +31,26 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))})
     })
     @GetMapping("/getUser")
+    @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getUserByIdOrAll(@Parameter(name = "Authorization", required = true) @RequestHeader(AppConstants.AUTHORIZATION) final String authorizationHeader,
-                                              @Parameter(name = "userId", description = "Id related to User") @RequestParam(required = false) Integer userId) {
+    public ResponseEntity<?> getUserByIdOrAll(@Parameter(name = "userId", description = "Id related to User") @RequestParam(required = false) Integer userId) {
         log.info("UserController > getUserByIdOrAll > Start [userId : {}]", userId);
         return ResponseEntity.ok(userService.getUserByIdOrAll(userId));
     }
 
     @Operation(summary = "Save User details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User saved successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "201", description = "User saved successfully"),
             @ApiResponse(responseCode = "400", description = "Bad request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class))}),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))})
+            @ApiResponse(responseCode = "403", description = "Forbidden access"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @PostMapping("/createUser")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> createUser(@Parameter(name = "Authorization", required = true) @RequestHeader(AppConstants.AUTHORIZATION) final String authorizationHeader,
-                                           @Parameter(name = "userId", description = "Id related to User") @RequestParam Integer userId,
-                                           @Parameter(name = "name", description = "Name of the User") @RequestParam String name,
-                                           @Parameter(name = "city", description = "City of the User")@RequestParam String city) {
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> createUser(@Parameter(name = "userId", description = "Id related to User") @RequestParam Integer userId,
+                                             @Parameter(name = "name", description = "Name of the User") @RequestParam String name,
+                                             @Parameter(name = "city", description = "City of the User")@RequestParam String city) {
         log.info("UserController > createUser > Start [userId : {}, name : {}, city : {}]", userId, name, city);
         userService.saveUser(userId, name, city);
         log.info("UserController > createUser > End [userId : {}]", userId);
@@ -57,17 +59,19 @@ public class UserController {
 
     @Operation(summary = "Update User details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User updated successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "200", description = "User updated successfully"),
             @ApiResponse(responseCode = "400", description = "Bad request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class))}),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))})
+            @ApiResponse(responseCode = "403", description = "Forbidden access"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @PutMapping("/updateUser")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> updateUser(@Parameter(name = "Authorization", required = true) @RequestHeader(AppConstants.AUTHORIZATION) final String authorizationHeader,
-                                             @Parameter(name = "userId", description = "Id related to User") @RequestParam Integer userId,
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> updateUser(@Parameter(name = "userId", description = "Id related to User") @RequestParam Integer userId,
                                              @Parameter(name = "name", description = "New Name of the User") @RequestParam(required = false) String name,
                                              @Parameter(name = "city", description = "New City of the User") @RequestParam(required = false) String city) {
         log.info("UserController > updateUser > Start [userId : {}, name : {}, city : {}]", userId, name, city);
+
         userService.updateUserById(userId, name, city);
         log.info("UserController > updateUser > End [userId : {}]", userId);
         return ResponseEntity.ok(AppConstants.SUCCESS);
@@ -75,14 +79,15 @@ public class UserController {
 
     @Operation(summary = "Delete User details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User deleted successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "200", description = "User deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Bad request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class))}),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))})
+            @ApiResponse(responseCode = "403", description = "Forbidden access"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @DeleteMapping("/deleteUser")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteUser(@Parameter(name = "Authorization", required = true) @RequestHeader(AppConstants.AUTHORIZATION) final String authorizationHeader,
-                                             @Parameter(name = "userId", description = "Id related to User") @RequestParam Integer userId) {
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteUser(@Parameter(name = "userId", description = "Id related to User") @RequestParam Integer userId) {
         log.info("UserController > deleteUser > Start [userId : {}]", userId);
         userService.deleteUserById(userId);
         log.info("UserController > deleteUser > End [userId : {}]", userId);

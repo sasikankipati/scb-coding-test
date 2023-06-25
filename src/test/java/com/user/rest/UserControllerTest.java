@@ -27,14 +27,14 @@ public class UserControllerTest {
     @Test
     public void testGetUserByIdOrAllWithIdInput() {
         Mockito.when(userService.getUserByIdOrAll(1)).thenReturn(UserTestSupport.prepareTestUser());
-        User user = (User) userController.getUserByIdOrAll("dummyAuth", 1).getBody();
+        User user = (User) userController.getUserByIdOrAll(1).getBody();
         Assertions.assertEquals(1, user.getUserId());
     }
 
     @Test
     public void testGetUserByIdOrAllWithoutIdInput() {
         Mockito.when(userService.getUserByIdOrAll(null)).thenReturn(UserTestSupport.prepareTestUsers());
-        List<User> users = (List<User>) userController.getUserByIdOrAll("dummyAuth", null).getBody();
+        List<User> users = (List<User>) userController.getUserByIdOrAll( null).getBody();
         Assertions.assertEquals(2, users.size());
     }
 
@@ -42,7 +42,7 @@ public class UserControllerTest {
     public void testGetUserByIdOrAllWithInvalidIdInput() {
         Mockito.when(userService.getUserByIdOrAll(1)).thenThrow(new UserNotFoundException("1"));
         Exception exception = Assertions.assertThrows(UserNotFoundException.class, () -> {
-            userController.getUserByIdOrAll("dummyAuth", 1).getBody();
+            userController.getUserByIdOrAll(1).getBody();
         });
         Assertions.assertEquals("User not found with Id : 1", exception.getMessage());
     }
@@ -50,28 +50,28 @@ public class UserControllerTest {
     @Test
     public void testSaveUserByValidInputs() {
         Mockito.doNothing().when(userService).saveUser(1, "Name", "City");
-        String saveResponse = userController.createUser("dummyAuth", 1, "Name", "City").getBody();
+        String saveResponse = userController.createUser( 1, "Name", "City").getBody();
         Assertions.assertEquals(AppConstants.SUCCESS, saveResponse);
     }
 
     @Test
     public void testUpdateUserByIdWithName() {
         Mockito.doNothing().when(userService).updateUserById(1, "Name", null);
-        String saveResponse = userController.updateUser("dummyAuth", 1, "Name", null).getBody();
+        String saveResponse = userController.updateUser( 1, "Name", null).getBody();
         Assertions.assertEquals(AppConstants.SUCCESS, saveResponse);
     }
 
     @Test
     public void testUpdateUserByIdWithCity() {
         Mockito.doNothing().when(userService).updateUserById(1, null, "City");
-        String saveResponse = userController.updateUser("dummyAuth", 1, null, "City").getBody();
+        String saveResponse = userController.updateUser( 1, null, "City").getBody();
         Assertions.assertEquals(AppConstants.SUCCESS, saveResponse);
     }
 
     @Test
     public void testDeleteUser() {
         Mockito.doNothing().when(userService).deleteUserById(1);
-        String saveResponse = userController.deleteUser("dummyAuth", 1).getBody();
+        String saveResponse = userController.deleteUser( 1).getBody();
         Assertions.assertEquals(AppConstants.SUCCESS, saveResponse);
     }
 

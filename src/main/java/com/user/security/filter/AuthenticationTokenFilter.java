@@ -57,9 +57,11 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private String getTokenFromAuthHeader(HttpServletRequest request) {
         String headerAuth = request.getHeader(AppConstants.AUTHORIZATION);
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(AppConstants.BEARER)) {
-            return headerAuth.substring(AppConstants.BEARER.length());
+        if (StringUtils.hasText(headerAuth)) {
+            if(headerAuth.startsWith(AppConstants.BEARER)) {
+                headerAuth = headerAuth.substring(AppConstants.BEARER.length());
+            }
         }
-        return null;
+        return headerAuth;
     }
 }

@@ -11,7 +11,7 @@ import com.user.security.entity.Role;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import com.user.security.entity.AuthUser;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -37,10 +37,6 @@ public interface AuthenticationTestSupport {
 
     static Client prepareClient() {
         return new Client(1, "ClientName", "Password", Set.of(new Role(1, RoleEnum.ROLE_USER)));
-    }
-
-    static AuthUser prepareAuthUser() {
-        return new AuthUser(1, "UserName", "Password", Set.of(new Role(1, RoleEnum.ROLE_USER)));
     }
 
     static Authentication prepareAuthentication() {

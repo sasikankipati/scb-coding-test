@@ -33,7 +33,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "201", description = "Client Registered successfully", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RegisterResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Client with name already exists", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))})
-            })
+    })
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> doRegistration(@Validated @RequestBody @Parameter(description = "Register Client request") RegisterRequest registerRequest) {
         log.info("AuthenticationController > doRegistration > Start [clientName : {}]", registerRequest.getClientName());
